@@ -256,12 +256,18 @@ resource "google_cloud_run_v2_service" "simple_websocket_service" {
     manual_instance_count = 0
   }
 
-  # Prevents Terraform from overwriting image updates made by CI/CD
+  depends_on = [
+    module.docker_repository,
+    module.openai_api_key,
+    google_storage_bucket.audio_files,
+    google_project_service.project_services["run.googleapis.com"],
+  ]
+
   lifecycle {
     ignore_changes = [
       client_version,
       client,
-      template[0].containers[0].image,
+      template[0].containers[0].image, # Prevents Terraform from overwriting image updates made by CI/CD
     ]
   }
 }

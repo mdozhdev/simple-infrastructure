@@ -7,6 +7,10 @@ variable "org_id" {
 variable "project_id" {
   type        = string
   description = "Default GCP project"
+  validation {
+    condition     = can(regex("^[a-z][a-z0-9-]{4,28}[a-z0-9]$", var.project_id))
+    error_message = "Project ID must be 6-30 characters, lowercase letters, digits, or hyphens."
+  }
 }
 
 variable "region" {
@@ -34,6 +38,10 @@ variable "openai_api_key" {
   type        = string
   description = "OpenAI API Key"
   sensitive   = true
+  validation {
+    condition     = length(var.openai_api_key) > 0
+    error_message = "OpenAI API key cannot be empty."
+  }
 }
 
 variable "service_name" {
@@ -50,4 +58,8 @@ variable "github_repo" {
   type        = string
   description = "GitHub repository name"
   default     = "simple-websocket-service"
+  validation {
+    condition     = can(regex("^[a-zA-Z0-9_-]+$", var.github_repo))
+    error_message = "Repository name must contain only alphanumeric characters, hyphens, and underscores."
+  }
 }
